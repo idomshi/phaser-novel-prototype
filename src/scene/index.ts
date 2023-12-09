@@ -1,1 +1,3 @@
-export const Scenes = [];
+import { MessageWindow } from "./MessageWindow";
+
+export const Scenes = [MessageWindow];
