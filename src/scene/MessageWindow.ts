@@ -3,7 +3,7 @@ export class MessageWindow extends Phaser.Scene {
   private box!: Phaser.GameObjects.Rectangle;
   private text!: Phaser.GameObjects.Text;
   constructor() {
-    super("main");
+    super("messagewindow");
   }
 
   preload(): void {}
