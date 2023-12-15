@@ -1,3 +1,5 @@
+import { temporary, updateState } from "../stores";
+
 export class MessageWindow extends Phaser.Scene {
   private container!: Phaser.GameObjects.Container;
   private box!: Phaser.GameObjects.Rectangle;
@@ -8,7 +10,7 @@ export class MessageWindow extends Phaser.Scene {
 
   preload(): void {}
 
-  create(): void {
+  async create(): Promise<void> {
     const { width, height } = this.game.canvas;
     // 4方向marginで指定するのが好きかなぁ。
     const [marginLeft, marginTop, marginRight, marginBottom] = [
@@ -57,9 +59,17 @@ export class MessageWindow extends Phaser.Scene {
     );
     this.container.add(this.text);
 
-    this.text.setText(
-      "雨は、羅生門をつつんで、遠くから、ざあっと云う音をあつめて来る。夕闇は次第に空を低くして、見上げると、門の屋根が、斜につき出した甍いらかの先に、重たくうす暗い雲を支えている。",
-    );
+    temporary.subscribeMessage((val) => {
+      console.log(`$message value is ${val}.`);
+      this.text.setText(val);
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    updateState("Next", {});
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    updateState("Next", {});
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    updateState("Next", {});
   }
 
   update(time: number, delta: number): void {
