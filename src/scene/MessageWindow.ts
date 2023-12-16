@@ -4,6 +4,7 @@ export class MessageWindow extends Phaser.Scene {
   private container!: Phaser.GameObjects.Container;
   private box!: Phaser.GameObjects.Rectangle;
   private text!: Phaser.GameObjects.Text;
+  private textChanges: string | undefined = undefined;
   constructor() {
     super("messagewindow");
   }
@@ -61,10 +62,14 @@ export class MessageWindow extends Phaser.Scene {
 
     temporary.subscribeMessage((val) => {
       console.log(`$message value is ${val}.`);
-      this.text.setText(val);
+      this.textChanges = val;
     });
   }
 
-  update(time: number, delta: number): void {
+  update(): void {
+    if (this.textChanges !== undefined) {
+      this.text.setText(this.textChanges);
+      this.textChanges = undefined;
+    }
   }
 }
