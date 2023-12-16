@@ -1,4 +1,4 @@
-import { temporary, updateState } from "../stores";
+import { temporary } from "../stores";
 
 export class MessageWindow extends Phaser.Scene {
   private container!: Phaser.GameObjects.Container;
@@ -63,13 +63,6 @@ export class MessageWindow extends Phaser.Scene {
       console.log(`$message value is ${val}.`);
       this.text.setText(val);
     });
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    updateState("Next", {});
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    updateState("Next", {});
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    updateState("Next", {});
   }
 
   update(time: number, delta: number): void {

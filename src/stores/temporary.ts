@@ -20,5 +20,5 @@ const setMessage = action($message, "setMessage", (store, str) => {
 export const next = () => {
   setMessage(text[p]);
   p += 1;
-  if (p > text.length) p = 0;
+  if (p >= text.length) p = 0;
 };
