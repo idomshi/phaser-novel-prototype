@@ -8,12 +8,27 @@ const updateMessage = {
 // 形式にするか迷ったけどとりあえずtypeof keyof typeofで。
 type UpdateMessage = typeof updateMessage[keyof typeof updateMessage];
 
-export function updateState(msg: UpdateMessage, payload: any) {
-  switch (msg) {
-    case "Next": {
-      next();
+const messageQueue: [UpdateMessage, any][] = [];
+
+/** キューからアイテムが無くなるまでメッセージに基づき状態を更新する。 */
+function popAndUpdate() {
+  let item = messageQueue.shift();
+  while (item !== undefined) {
+    const [msg, _payload] = item;
+    switch (msg) {
+      case "Next": {
+        next();
+      }
     }
+
+    item = messageQueue.shift();
   }
+}
+
+/** 状態を更新するためのMessageを受け取る。 */
+export function updateState(msg: UpdateMessage, payload: any) {
+  messageQueue.push([msg, payload]);
+  popAndUpdate();
 }
 
 export const temporary = {
