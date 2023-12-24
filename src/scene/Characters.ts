@@ -6,11 +6,15 @@ export class Characters extends Phaser.Scene {
     super("characters");
   }
 
+  preload() {
+    this.load.image("char-0", char_0);
+  }
+
   create() {
     const { width, height } = this.game.canvas;
     this.character = this.add.container(width / 2, height / 2);
-    this.load.image("char-0", char_0);
-    const image = this.add.image(0, 0, "char-0");
+    const image = this.add.image(0, 0, "char-0").setScale(2);
+    image.setName("0");
     this.character.add(image);
   }
 }
