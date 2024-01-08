@@ -19,6 +19,12 @@ interface ShowCharacter {
   continue?: boolean;
 }
 
+interface RemoveCharacter {
+  type: "removeCharacter";
+  name: string;
+  continue?: boolean;
+}
+
 interface MoveNext {
   type: "moveNext";
   to: Function;
@@ -54,6 +60,7 @@ type Scenario =
   | ScenarioText
   | BackgroundImage
   | ShowCharacter
+  | RemoveCharacter
   | MoveNext
   | FadeOut
   | FadeIn
@@ -112,9 +119,19 @@ const scenario: Scenario[] = [
     continue: false,
   },
   {
+    type: "removeCharacter",
+    name: "char_0",
+    continue: false,
+  },
+  {
     type: "text",
     text:
       "下人は、手段を選ばないという事を肯定しながらも、この「すれば」のかたをつけるために、当然、その後に来る可き「盗人ぬすびとになるよりほかに仕方がない」と云う事を、積極的に肯定するだけの、勇気が出ずにいたのである。",
+    continue: false,
+  },
+  {
+    type: "removeCharacter",
+    name: "char_1",
     continue: false,
   },
 ];
@@ -142,6 +159,17 @@ const setChar = action(
   },
 );
 
+const removeChar = action(
+  $chars,
+  "removeChar",
+  (store, name: string) => {
+    const chars = store.value ?? [];
+    const idx = chars.findIndex((value) => value.name === name);
+    chars.splice(idx, 1);
+    store.set([...chars]);
+  },
+);
+
 export const next = () => {
   const code = scenario[p];
   switch (code.type) {
@@ -152,6 +180,11 @@ export const next = () => {
 
     case "showCharacter": {
       setChar(code.name, code.face);
+      break;
+    }
+
+    case "removeCharacter": {
+      removeChar(code.name);
       break;
     }
   }

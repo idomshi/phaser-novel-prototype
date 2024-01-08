@@ -5,7 +5,7 @@ import { Character } from "../stores/temporary";
 
 export class Characters extends Phaser.Scene {
   private character!: Phaser.GameObjects.Container;
-  private charsChanges: Character[] = [];
+  private charsChanges: Character[] | undefined = undefined;
   constructor() {
     super("characters");
   }
@@ -25,28 +25,43 @@ export class Characters extends Phaser.Scene {
   }
 
   update(): void {
-    const char_num = this.charsChanges.length;
-    if (char_num > 0) {
-      // 全部一回destroyしちゃってるので良くない。
+    const chars = this.charsChanges;
+    if (chars !== undefined) {
+      // nameが違うものを抽出する。
+      const arr = this.character.getAll("name")
+        .map((v) => v.name)
+        .filter((v) => chars.find((w) => w.name === v) === undefined);
+
       // nameが同じものは使いまわしたい。
-      this.character.each((v: any) => {
-        v.destroy();
+      arr.forEach((name) => {
+        this.character.getByName(name).destroy();
       });
 
       // 立ち絵のx座標を計算する。
       const { width } = this.game.canvas;
 
-      const step = Math.round(width / (char_num + 1));
+      const step = Math.round(width / (chars.length + 1));
       let pos = step - width / 2;
-      for (const c of this.charsChanges) {
-        const image = this.add.image(pos, 0, c.face)
-          .setScale(2);
-        image.setName(c.name);
-        this.character.add(image);
+      for (const c of chars) {
+        const imageObject = this.character.getByName(
+          c.name,
+        ) as Phaser.GameObjects.Image;
+        if (imageObject === null) {
+          // 新しいキャラクターならimageを追加する。
+          const image = this.add.image(pos, 0, c.face)
+            .setScale(2);
+          image.setName(c.name);
+          this.character.add(image);
+        } else {
+          // すでに表示されているキャラクターなら画像を置き換える。
+          imageObject.setTexture(c.face);
+          imageObject.setX(pos);
+        }
+
         pos += step;
       }
 
-      this.charsChanges = [];
+      this.charsChanges = undefined;
     }
   }
 }
