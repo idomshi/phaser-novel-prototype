@@ -138,11 +138,11 @@ const scenario: Scenario[] = [
 
 let p = 0;
 
-const setMessage = action($message, "setMessage", (store, str) => {
+export const setMessage = action($message, "setMessage", (store, str) => {
   store.set(str);
 });
 
-const setChar = action(
+export const setChar = action(
   $chars,
   "setChar",
   (store, name: string, face: string) => {
@@ -159,7 +159,7 @@ const setChar = action(
   },
 );
 
-const removeChar = action(
+export const removeChar = action(
   $chars,
   "removeChar",
   (store, name: string) => {

@@ -1,33 +1,73 @@
-import { $chars, $message, next } from "./temporary";
+import {
+  $chars,
+  $message,
+  next,
+  removeChar,
+  setChar,
+  setMessage,
+} from "./temporary";
 
-const updateMessage = {
-  next: "Next",
-} as const;
+interface Next {
+  type: "Next";
+}
 
-// type UpdateMessage = { type: 'Next' } | { type: 'Jump' }の
-// 形式にするか迷ったけどとりあえずtypeof keyof typeofで。
-type UpdateMessage = typeof updateMessage[keyof typeof updateMessage];
+interface SetText {
+  type: "SetText";
+  text: string;
+}
 
-const messageQueue: [UpdateMessage, any][] = [];
+interface ShowCharacter {
+  type: "ShowCharacter";
+  name: string;
+  face: string;
+}
+
+interface RemoveCharacter {
+  type: "RemoveCharacter";
+  name: string;
+}
+
+type UpdateMessage =
+  | Next
+  | SetText
+  | ShowCharacter
+  | RemoveCharacter;
+
+const messageQueue: UpdateMessage[] = [];
 
 /** キューからアイテムが無くなるまでメッセージに基づき状態を更新する。 */
 function popAndUpdate() {
-  let item = messageQueue.shift();
-  while (item !== undefined) {
-    const [msg, _payload] = item;
-    switch (msg) {
+  let msg = messageQueue.shift();
+  while (msg !== undefined) {
+    switch (msg.type) {
       case "Next": {
         next();
+        break;
+      }
+
+      case "SetText": {
+        setMessage(msg.text);
+        break;
+      }
+
+      case "ShowCharacter": {
+        setChar(msg.name, msg.face);
+        break;
+      }
+
+      case "RemoveCharacter": {
+        removeChar(msg.name);
+        break;
       }
     }
 
-    item = messageQueue.shift();
+    msg = messageQueue.shift();
   }
 }
 
 /** 状態を更新するためのMessageを受け取る。 */
-export function updateState(msg: UpdateMessage, payload: any) {
-  messageQueue.push([msg, payload]);
+export function updateState(msg: UpdateMessage) {
+  messageQueue.push(msg);
   popAndUpdate();
 }
 
