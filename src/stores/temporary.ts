@@ -62,11 +62,24 @@ type Scenario =
 
 export const $message = atom("");
 
+export interface Character {
+  name: string;
+  face: string;
+}
+
+export const $chars = atom<Character[]>([]);
+
 const scenario: Scenario[] = [
   {
     type: "text",
     text:
       "雨は、羅生門をつつんで、遠くから、ざあっと云う音をあつめて来る。夕闇は次第に空を低くして、見上げると、門の屋根が、斜につき出した甍いらかの先に、重たくうす暗い雲を支えている。",
+    continue: false,
+  },
+  {
+    type: "showCharacter",
+    name: "char_0",
+    face: "char-0",
     continue: false,
   },
   {
@@ -106,11 +119,26 @@ const setMessage = action($message, "setMessage", (store, str) => {
   store.set(str);
 });
 
+const setChar = action(
+  $chars,
+  "setChar",
+  (store, name: string, face: string) => {
+    const oldVal = store.value ?? [];
+    store.set([...oldVal, { name, face }]);
+  },
+);
+
 export const next = () => {
   const code = scenario[p];
   switch (code.type) {
     case "text": {
       setMessage(code.text);
+      break;
+    }
+
+    case "showCharacter": {
+      setChar(code.name, code.face);
+      break;
     }
   }
   p += 1;

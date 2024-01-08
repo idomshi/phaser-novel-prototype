@@ -1,8 +1,11 @@
 import char_0 from "../../assets/character/0.webp";
 import char_1 from "../../assets/character/1.webp";
+import { temporary } from "../stores";
+import { Character } from "../stores/temporary";
 
 export class Characters extends Phaser.Scene {
   private character!: Phaser.GameObjects.Container;
+  private charsChanges: Character[] = [];
   constructor() {
     super("characters");
   }
@@ -14,20 +17,36 @@ export class Characters extends Phaser.Scene {
 
   create() {
     const { width, height } = this.game.canvas;
-    const [cx, cy] = [width >> 1, height >> 1];
-    this.character = this.add.container(cx, cy);
+    this.character = this.add.container(width / 2, height / 2);
 
-    // 立ち絵のx座標を計算する。
-    const chars = ["char-0", "char-1"];
-    const char_num = chars.length;
-    const step = Math.round(width / (char_num + 1));
-    let pos = step - cx;
-    for (let i = 0; i <= char_num; ++i) {
-      const image = this.add.image(pos, 0, chars[i])
-        .setScale(2);
-      image.setName(String(i));
-      this.character.add(image);
-      pos += step;
+    temporary.subscribeChars((val) => {
+      this.charsChanges = [...val];
+    });
+  }
+
+  update(): void {
+    const char_num = this.charsChanges.length;
+    if (char_num > 0) {
+      // 全部一回destroyしちゃってるので良くない。
+      // nameが同じものは使いまわしたい。
+      this.character.each((v: any) => {
+        v.destroy();
+      });
+
+      // 立ち絵のx座標を計算する。
+      const { width } = this.game.canvas;
+
+      const step = Math.round(width / (char_num + 1));
+      let pos = step - width / 2;
+      for (const c of this.charsChanges) {
+        const image = this.add.image(pos, 0, c.face)
+          .setScale(2);
+        image.setName(c.name);
+        this.character.add(image);
+        pos += step;
+      }
+
+      this.charsChanges = [];
     }
   }
 }

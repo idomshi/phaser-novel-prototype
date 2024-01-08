@@ -1,4 +1,4 @@
-import { $message, next } from "./temporary";
+import { $chars, $message, next } from "./temporary";
 
 const updateMessage = {
   next: "Next",
@@ -32,5 +32,6 @@ export function updateState(msg: UpdateMessage, payload: any) {
 }
 
 export const temporary = {
+  subscribeChars: $chars.subscribe,
   subscribeMessage: $message.subscribe,
 };
