@@ -95,6 +95,12 @@ const scenario: Scenario[] = [
     continue: false,
   },
   {
+    type: "showCharacter",
+    name: "char_1",
+    face: "char-1",
+    continue: false,
+  },
+  {
     type: "text",
     text:
       "選ばないとすれば――下人の考えは、何度も同じ道を低徊ていかいした揚句あげくに、やっとこの局所へ逢着ほうちゃくした。",
@@ -124,7 +130,15 @@ const setChar = action(
   "setChar",
   (store, name: string, face: string) => {
     const oldVal = store.value ?? [];
-    store.set([...oldVal, { name, face }]);
+    const idx = oldVal.findIndex((value) => value.name === name);
+    let newVal;
+    if (idx < 0) {
+      newVal = [...oldVal, { name, face }];
+    } else {
+      oldVal.splice(idx, 1, { name, face });
+      newVal = oldVal;
+    }
+    store.set(newVal);
   },
 );
 
