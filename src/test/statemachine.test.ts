@@ -32,7 +32,8 @@ describe("state machine", () => {
       expect(updateFn).toHaveBeenCalledTimes(1);
       expect(updateFn.mock.calls[0][0]).toEqual({
         type: "SetText",
-        text: "メッセージ",
+        text:
+          "雨は、羅生門をつつんで、遠くから、ざあっと云う音をあつめて来る。夕闇は次第に空を低くして、見上げると、門の屋根が、斜につき出した甍いらかの先に、重たくうす暗い雲を支えている。",
       });
     });
   });

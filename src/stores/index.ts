@@ -1,11 +1,14 @@
 import {
   $chars,
   $message,
-  next,
   removeChar,
   setChar,
   setMessage,
 } from "./temporary";
+
+import { useStateMachine } from "../stateMachine";
+
+const { next } = useStateMachine(updateState);
 
 interface Next {
   type: "Next";
@@ -41,7 +44,7 @@ function popAndUpdate() {
   while (msg !== undefined) {
     switch (msg.type) {
       case "Next": {
-        next();
+        next({ global: {}, savedata: {}, temporary: { flag: true } });
         break;
       }
 

@@ -7,7 +7,7 @@ export class InputManager extends Phaser.Scene {
   }
 
   private pressEnter(): void {
-    updateState("Next", {});
+    updateState({ type: "Next" });
   }
 
   create(): void {
